@@ -1,5 +1,5 @@
 {
-  "version": "0.1.2",
+  "version": "0.1.3",
   "name": "psi-sg",
   "display_name": "Pollutant Standards Index (PSI) Singapore",
   "description": "Provide the Singapore PSI (Pollutant Standards Index, https://en.wikipedia.org/wiki/Pollutant_Standards_Index ) from the https://data.gov.sg API. The data is provided under the terms of https://data.gov.sg/open-data-licence",
@@ -32,10 +32,10 @@
     "LICENSE",
     "README.md",
     "SHA256SUMS",
-    "src/psi-sg-adapter.js",
-    "src/psi-sg-device.js",
     "index.js",
-    "manifest.json"
+    "manifest.json",
+    "src/psi-sg-adapter.js",
+    "src/psi-sg-device.js"
   ],
   "moziot": {
     "api": {
