@@ -10,10 +10,10 @@
 
 const PSISG_PROPERTIES = {
     psi_twenty_four_hourly: {
-      title: 'Pollutants Standards Index',
+      title: 'Pollutant Standards Index',
       '@type': 'LevelProperty',
       type: 'integer',
-      description: 'Pollutants Standards Index',
+      description: 'Pollutant Standards Index',
       minimum: 0,
       maximum: 500,
       readOnly: true,
