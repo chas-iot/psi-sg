@@ -1,0 +1,49 @@
+{
+  "name": "psi-sg",
+  "display_name": "Pollutants Standards Index (PSI) Singapore",
+  "version": "0.0.1",
+  "description": "Provide the PSI (Pollutants Standards Index, https://en.wikipedia.org/wiki/Pollutant_Standards_Index ) for Singapore from the API at https://data.gov.sg The data is provided under the terms of https://data.gov.sg/open-data-licence",
+  "author": "Chas-IoT",
+  "main": "index.js",
+  "scripts": {
+    "lint": "eslint ."
+  },
+  "keywords": [
+    "mozilla",
+    "iot",
+    "adapter",
+    "Singapore",
+    "Pollutants Standard Index"
+  ],
+  "homepage": "https://github.com/mozilla-iot/psi-sg",
+  "license": "MPL-2.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/mozilla-iot/psi-sg.git"
+  },
+  "bugs": {
+    "url": "https://github.com/mozilla-iot/psi-sg/issues"
+  },
+  "devDependencies": {
+    "babel-eslint": "^10.1.0",
+    "eslint": "^6.8.0"
+  },
+  "files": [
+    "LICENSE",
+    "README.md",
+    "SHA256SUMS",
+    "src/psi-sg-adapter.js",
+    "src/psi-sg-device.js",
+    "index.js",
+    "manifest.json"
+  ],
+  "moziot": {
+    "api": {
+      "min": 2,
+      "max": 2
+    },
+    "type": "adapter",
+    "plugin": true,
+    "exec": "{nodeLoader} {path}"
+  }
+}

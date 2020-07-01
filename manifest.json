@@ -1,0 +1,19 @@
+{
+  "version": "0.0.1",
+  "id": "psi-sg",
+  "author": "Chas-IoT",
+  "name": "Pollutants Standards Index (PSI) Singapore",
+  "short_name": "PSI Singapore",
+  "description": "Provide the PSI (Pollutants Standards Index, https://en.wikipedia.org/wiki/Pollutant_Standards_Index ) for Singapore from the API at https://data.gov.sg The data is provided under the terms of https://data.gov.sg/open-data-licence",
+  "gateway_specific_settings": {
+    "webthings": {
+      "exec": "{nodeLoader} {path}",
+      "primary_type": "adapter",
+      "strict_max_version": "*",
+      "strict_min_version": "0.10.0"
+    }
+  },
+  "homepage_url": "https://github.com/mozilla-iot/psi-sg",
+  "license": "MPL-2.0",
+  "manifest_version": 1
+}
