@@ -1,5 +1,5 @@
 {
-  "version": "0.1.3",
+  "version": "0.1.4",
   "id": "psi-sg",
   "author": "Chas-IoT",
   "name": "Pollutant Standards Index (PSI) Singapore",
@@ -13,7 +13,7 @@
       "strict_min_version": "0.10.0"
     }
   },
-  "homepage_url": "https://github.com/mozilla-iot/psi-sg",
+  "homepage_url": "https://github.com/mozilla-iot/psi-sg#readme",
   "license": "MPL-2.0",
   "manifest_version": 1
 }
