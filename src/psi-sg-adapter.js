@@ -9,14 +9,14 @@
 'use strict';
 
 const ENDPOINT = 'https://api.data.gov.sg/v1/environment/psi';
-const SGTIMEZONE = 8*60*60*1000;  // milliseconds offset from UTC for Singapore
-const HOUR = 60*60*1000;  // the API updates every hour
-const MINS_OFFSET = 11*60*1000;  // request at a few mins past each hour
+const SGTIMEZONE = 8 * 60 * 60 * 1000;  // milliseconds offset from UTC for Singapore
+const HOUR = 60 * 60 * 1000;  // the API updates every hour
+const MINS_OFFSET = 11 * 60 * 1000;  // request at a few mins past each hour
 
 const manifest = require('../manifest.json');
 
-const { PSISGDevice } = require('./psi-sg-device');
-const { Adapter } = require('gateway-addon');
+const {PSISGDevice} = require('./psi-sg-device');
+const {Adapter} = require('gateway-addon');
 
 const fetch = require('node-fetch');
 
@@ -27,11 +27,13 @@ function calcTimeToRefresh() {
 }
 
 function PSIToText(r) {
+  /* eslint-disable curly */
   if (r < 51) return 'Good';
   if (r < 101) return 'Moderate';
   if (r < 201) return 'Unhealthy';
   if (r < 301) return 'Very Unhealthy';
-  return 'Hazardous'
+  /* eslint-enable curly */
+  return 'Hazardous';
 }
 
 class PSISGAdapter extends Adapter {
@@ -51,73 +53,72 @@ class PSISGAdapter extends Adapter {
         // get the update every hour thereafter
         this.getPSISGresults();
       }, HOUR);
-
-    }, calcTimeToRefresh() );
+    }, calcTimeToRefresh());
   }
 
   getPSISGresults() {
-    const dateStr = new Date(Date.now()+SGTIMEZONE).toISOString().substring(0,19);
-    fetch(ENDPOINT + '?date_time=' + encodeURIComponent(dateStr))
-    .then(response => {
-      if (!response.ok) {
-        throw new Error(`api response status: ${response.status} - ${response.statusText}`)
-      }
-      return response.json();
-    })
-    .then(json => {
-      const results = {};
-      json.region_metadata.forEach(item => {
-        results[item.name] = {
-          name: item.name,
-          latitude: item.label_location.latitude,
-          longitude: item.label_location.longitude,
+    const dateStr = new Date(Date.now() + SGTIMEZONE).toISOString().substring(0, 19);
+    fetch(`${ENDPOINT}?date_time=${encodeURIComponent(dateStr)}`)
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error(`api response status: ${response.status} - ${response.statusText}`);
         }
-      });
-      for(const location in results) {
-        for(const index in json.items[0].readings) {
-          results[location][index] = json.items[0].readings[index][location];
+        return response.json();
+      })
+      .then((json) => {
+        const results = {};
+        json.region_metadata.forEach((item) => {
+          results[item.name] = {
+            name: item.name,
+            latitude: item.label_location.latitude,
+            longitude: item.label_location.longitude,
+          };
+        });
+        for (const location in results) {
+          for (const index in json.items[0].readings) {
+            results[location][index] = json.items[0].readings[index][location];
+          }
         }
-      }
-      return results;
-    })
-    .then(apiData => {
-      for (const location in apiData) {
-        if (!this.devices[location]) {
-          const deviceId = `${manifest.id}-${location}`;
-          const device = new PSISGDevice(this, deviceId, {
-            title: `Singapore ${location}`,
-            description: `Singapore atmospheric pollution - ${location}`,
-            '@type': ['MultiLevelSensor'],
-          });
-          this.devices[location] = device;
-          this.handleDeviceAdded(device);
-        }
-        const device = this.devices[location];
-        if (device) {
-          for (const propName in apiData[location]) {
-            const prop = device.findProperty(propName);
-            prop && prop.setCachedValueAndNotify(apiData[location][propName]);
-            if (propName === 'psi_twenty_four_hourly') {
-              const prop2 = device.findProperty('psi_rating');
-              prop2 && prop2.setCachedValueAndNotify(PSIToText(apiData[location][propName]));
+        return results;
+      })
+      .then((apiData) => {
+        for (const location in apiData) {
+          if (!this.devices[location]) {
+            const deviceId = `${manifest.id}-${location}`;
+            const device = new PSISGDevice(this, deviceId, {
+              title: `Singapore ${location}`,
+              description: `Singapore atmospheric pollution - ${location}`,
+              '@type': ['MultiLevelSensor'],
+            });
+            this.devices[location] = device;
+            this.handleDeviceAdded(device);
+          }
+          const device = this.devices[location];
+          if (device) {
+            for (const propName in apiData[location]) {
+              const prop = device.findProperty(propName);
+              prop && prop.setCachedValueAndNotify(apiData[location][propName]);
+              if (propName === 'psi_twenty_four_hourly') {
+                const prop2 = device.findProperty('psi_rating');
+                prop2 && prop2.setCachedValueAndNotify(PSIToText(apiData[location][propName]));
+              }
             }
           }
         }
-      }
-    })
-    .catch((e) => console.error(e));
+      })
+      .catch((e) => console.error(e));
   }
 
-  addDevice(deviceId, deviceDescription) {
+  addDevice(deviceId) {
     return new Promise((resolve, reject) => {
       if (deviceId in this.devices) {
         reject(`addDevice: ${deviceId} already exists.`);
       } else {
         console.error(`addDevice: ${deviceId} - do not know how to handle.`);
         reject(`addDevice: ${deviceId} - do not know how to handle.`);
-//        const device = new PSISGAdapter(this, deviceId, deviceDescription);
-//        this.handleDeviceAdded(device);
-//        resolve(device);
+        // const device = new PSISGAdapter(this, deviceId, deviceDescription);
+        // this.handleDeviceAdded(device);
+        // resolve(device);
       }
     });
   }
@@ -134,9 +135,6 @@ class PSISGAdapter extends Adapter {
     });
   }
 
-  removeThing(device) {
-  }
-
 }
 
-module.exports = { PSISGAdapter };
+module.exports = {PSISGAdapter};

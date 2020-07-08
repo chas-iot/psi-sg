@@ -8,7 +8,7 @@
 
 'use strict';
 
-const { PSISGAdapter } = require('./src/psi-sg-adapter');
+const {PSISGAdapter} = require('./src/psi-sg-adapter');
 
 module.exports = (addonManager) => {
   new PSISGAdapter(addonManager);
