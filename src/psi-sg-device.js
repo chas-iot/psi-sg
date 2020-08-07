@@ -79,6 +79,10 @@ class PSISGDevice extends Device {
       const property = new Property(this, propertyName, PSISG_PROPERTIES[propertyName]);
       this.properties.set(propertyName, property);
     }
+    this.addEvent('APIerror',
+                  {title: 'API error',
+                   description: 'Details of an error encountered while using the PSI API',
+                   type: 'string'});
   }
 }
 

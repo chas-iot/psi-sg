@@ -16,7 +16,10 @@ const MINS_OFFSET = 11 * 60 * 1000;  // request at a few mins past each hour
 const manifest = require('../manifest.json');
 
 const {PSISGDevice} = require('./psi-sg-device');
-const {Adapter} = require('gateway-addon');
+const {
+  Adapter,
+  Event,
+} = require('gateway-addon');
 
 const fetch = require('node-fetch');
 
@@ -110,7 +113,14 @@ class PSISGAdapter extends Adapter {
           }
         }
       })
-      .catch((e) => console.error(e));
+      .catch((e) => {
+        console.error(e);
+        for (const deviceId in this.devices) {
+          const device = this.devices[deviceId];
+          device.saved &&
+            device.eventNotify(new Event(device, 'APIerror', e.message));
+        }
+      });
   }
 
   addDevice(deviceId) {
