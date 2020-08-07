@@ -41,6 +41,7 @@ class PSISGAdapter extends Adapter {
     super(addonManager, 'gov.sg-api-Adapter', manifest.id);
     addonManager.addAdapter(this);
     this.devices = {};
+    this.saved = {};
 
     // get current values
     this.getPSISGresults();
@@ -83,17 +84,20 @@ class PSISGAdapter extends Adapter {
       })
       .then((apiData) => {
         for (const location in apiData) {
-          if (!this.devices[location]) {
-            const deviceId = `${manifest.id}-${location}`;
+          const deviceId = `${manifest.id}-${location}`;
+          if (!this.devices[deviceId]) {
             const device = new PSISGDevice(this, deviceId, {
               title: `Singapore ${location}`,
               description: `Singapore atmospheric pollution - ${location}`,
               '@type': ['MultiLevelSensor'],
             });
-            this.devices[location] = device;
             this.handleDeviceAdded(device);
+            if (this.saved[deviceId]) {
+              this.devices[deviceId].saved = true;
+              delete this.saved[deviceId];
+            }
           }
-          const device = this.devices[location];
+          const device = this.devices[deviceId];
           if (device) {
             for (const propName in apiData[location]) {
               const prop = device.findProperty(propName);
@@ -133,6 +137,14 @@ class PSISGAdapter extends Adapter {
         reject(`Device: ${deviceId} not found.`);
       }
     });
+  }
+
+  handleDeviceSaved(deviceId) {
+    if (this.devices[deviceId]) {
+      this.devices[deviceId].saved = true;
+    } else {
+      this.saved[deviceId] = true;
+    }
   }
 
 }
