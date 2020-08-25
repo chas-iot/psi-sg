@@ -1,6 +1,6 @@
 # psi-sg
 
-An adapter for the Mozilla IoT Gateway to provide the Singapore Pollutant Standards Index (PSI) from the https://data.gov.sg API. 
+An adapter for the Mozilla IoT Gateway to provide the Singapore PSI from the https://data.gov.sg API.
 
 See https://en.wikipedia.org/wiki/Pollutant_Standards_Index
 
