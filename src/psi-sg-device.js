@@ -83,6 +83,7 @@ class PSISGDevice extends Device {
                   {title: 'API error',
                    description: 'Details of an error encountered while using the PSI API',
                    type: 'string'});
+    this.links = [{href: 'https://www.haze.gov.sg/resources/readings-over-the-last-24-hours'}];
   }
 }
 
