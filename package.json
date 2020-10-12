@@ -9,7 +9,6 @@
     "lint": "eslint ."
   },
   "keywords": [
-    "mozilla",
     "iot",
     "adapter",
     "Singapore",
