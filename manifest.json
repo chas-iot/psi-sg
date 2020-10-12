@@ -4,7 +4,7 @@
   "author": "Chas-IoT",
   "name": "Pollutant Standards Index (PSI) Singapore",
   "short_name": "PSI SG",
-  "description": "Provide the Singapore PSI (Pollutant Standards Index, https://en.wikipedia.org/wiki/Pollutant_Standards_Index ) from the https://data.gov.sg API. The data is provided under the terms of https://data.gov.sg/open-data-licence",
+  "description": "Provide the Singapore PSI ( https://en.wikipedia.org/wiki/Pollutant_Standards_Index ) from the https://data.gov.sg API. The data is provided under the terms of https://data.gov.sg/open-data-licence",
   "gateway_specific_settings": {
     "webthings": {
       "exec": "{nodeLoader} {path}",
