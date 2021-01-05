@@ -62,15 +62,18 @@ class PSISGAdapter extends Adapter {
 
   getPSISGresults() {
     const dateStr = new Date(Date.now() + SGTIMEZONE).toISOString().substring(0, 19);
-    fetch(`${ENDPOINT}?date_time=${encodeURIComponent(dateStr)}`)
+    const queryStr = `${ENDPOINT}?date_time=${encodeURIComponent(dateStr)}`;
+    fetch(queryStr)
       .then((response) => {
         if (!response.ok) {
-          throw new Error(`api response status: ${response.status} - ${response.statusText}`);
+          throw new Error(`api response status: ${response.status} - ${response.statusText}
+to query: ${queryStr}`);
         }
         return response.json();
       })
       .then((json) => {
         const results = {};
+        let empty = true;
         json.region_metadata.forEach((item) => {
           results[item.name] = {
             name: item.name,
@@ -81,7 +84,12 @@ class PSISGAdapter extends Adapter {
         for (const location in results) {
           for (const index in json.items[0].readings) {
             results[location][index] = json.items[0].readings[index][location];
+            empty = false;
           }
+        }
+        if (empty) {
+          throw new Error(`api returned empty results: ${JSON.stringify(json, null, 2)}
+to query: ${queryStr}`);
         }
         return results;
       })
