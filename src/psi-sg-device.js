@@ -62,6 +62,19 @@ const PSISG_PROPERTIES = {
     type: 'string',
     readOnly: true,
   },
+  pm25_one_hourly: {
+    title: `PM25:
+2.5 micron Particulate Matter concentr'n`,
+    type: 'integer',
+    description: `1-hr PM₂.₅ reading`,
+    readOnly: true,
+    unit: 'µg/m³',
+  },
+  pm25_rating: {
+    title: 'PM25 Indicator',
+    type: 'string',
+    readOnly: true,
+  },
 };
 
 const {

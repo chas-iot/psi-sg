@@ -8,7 +8,8 @@
 
 'use strict';
 
-const ENDPOINT = 'https://api.data.gov.sg/v1/environment/psi';
+const ENDPOINT_PSI = 'https://api.data.gov.sg/v1/environment/psi';
+const ENDPOINT_PM25 = 'https://api.data.gov.sg/v1/environment/pm25';
 const SGTIMEZONE = 8 * 60 * 60 * 1000;  // milliseconds offset from UTC for Singapore
 const HOUR = 60 * 60 * 1000;  // the API updates every hour
 const MINS_OFFSET = 11 * 60 * 1000;  // request at a few mins past each hour
@@ -39,6 +40,15 @@ function PSIToText(r) {
   return 'Hazardous';
 }
 
+function PM25ToText(r) {
+  /* eslint-disable curly */
+  if (r < 51) return 'Normal';
+  if (r < 151) return 'Elevated';
+  if (r < 251) return 'High';
+  /* eslint-enable curly */
+  return 'Very High';
+}
+
 class PSISGAdapter extends Adapter {
   constructor(addonManager) {
     super(addonManager, 'gov.sg-api-Adapter', manifest.id);
@@ -47,22 +57,25 @@ class PSISGAdapter extends Adapter {
     this.saved = {};
 
     // get current values
-    this.getPSISGresults();
+    this.getResults(ENDPOINT_PSI, 'psi_twenty_four_hourly', 'psi_rating', PSIToText);
+    this.getResults(ENDPOINT_PM25, 'pm25_one_hourly', 'pm25_rating', PM25ToText);
 
     setTimeout(() => {
       // get the next API update
-      this.getPSISGresults();
+      this.getResults(ENDPOINT_PSI, 'psi_twenty_four_hourly', 'psi_rating', PSIToText);
+      this.getResults(ENDPOINT_PM25, 'pm25_one_hourly', 'pm25_rating', PM25ToText);
 
       setInterval(() => {
         // get the update every hour thereafter
-        this.getPSISGresults();
+        this.getResults(ENDPOINT_PSI, 'psi_twenty_four_hourly', 'psi_rating', PSIToText);
+        this.getResults(ENDPOINT_PM25, 'pm25_one_hourly', 'pm25_rating', PM25ToText);
       }, HOUR);
     }, calcTimeToRefresh());
   }
 
-  getPSISGresults() {
+  getResults(endpoint, srcName, dstName, convert) {
     const dateStr = new Date(Date.now() + SGTIMEZONE).toISOString().substring(0, 19);
-    const queryStr = `${ENDPOINT}?date_time=${encodeURIComponent(dateStr)}`;
+    const queryStr = `${endpoint}?date_time=${encodeURIComponent(dateStr)}`;
     fetch(queryStr)
       .then((response) => {
         if (!response.ok) {
@@ -113,9 +126,9 @@ to query: ${queryStr}`);
             for (const propName in apiData[location]) {
               const prop = device.findProperty(propName);
               prop && prop.setCachedValueAndNotify(apiData[location][propName]);
-              if (propName === 'psi_twenty_four_hourly') {
-                const prop2 = device.findProperty('psi_rating');
-                prop2 && prop2.setCachedValueAndNotify(PSIToText(apiData[location][propName]));
+              if (propName === srcName) {
+                const prop2 = device.findProperty(dstName);
+                prop2 && prop2.setCachedValueAndNotify(convert(apiData[location][propName]));
               }
             }
           }
