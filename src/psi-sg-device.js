@@ -83,14 +83,16 @@ const {
 } = require('gateway-addon');
 
 class PSISGDevice extends Device {
-  constructor(adapter, id, deviceDescription) {
+  constructor(adapter, id, deviceDescription, hide_sub_index) {
     super(adapter, id);
     this.title = deviceDescription.title;
     this.description = deviceDescription.description;
     this['@type'] = deviceDescription['@type'];
     for (const propertyName in PSISG_PROPERTIES) {
-      const property = new Property(this, propertyName, PSISG_PROPERTIES[propertyName]);
-      this.properties.set(propertyName, property);
+      if (!(hide_sub_index && propertyName.endsWith('_sub_index'))) {
+        const property = new Property(this, propertyName, PSISG_PROPERTIES[propertyName]);
+        this.properties.set(propertyName, property);
+      }
     }
     this.addEvent('APIerror',
                   {title: 'API error',

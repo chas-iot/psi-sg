@@ -19,6 +19,7 @@ const manifest = require('../manifest.json');
 const {PSISGDevice} = require('./psi-sg-device');
 const {
   Adapter,
+  Database,
   Event,
 } = require('gateway-addon');
 
@@ -55,22 +56,33 @@ class PSISGAdapter extends Adapter {
     addonManager.addAdapter(this);
     this.devices = {};
     this.saved = {};
+    this.db = new Database(manifest.id);
+    this.db.open()
+      .then(() => {
+        return this.db.loadConfig();
+      })
+      .then((config) => {
+        this.hide_sub_index = config.hide_sub_index;
 
-    // get current values
-    this.getResults(ENDPOINT_PSI, 'psi_twenty_four_hourly', 'psi_rating', PSIToText);
-    this.getResults(ENDPOINT_PM25, 'pm25_one_hourly', 'pm25_rating', PM25ToText);
-
-    setTimeout(() => {
-      // get the next API update
-      this.getResults(ENDPOINT_PSI, 'psi_twenty_four_hourly', 'psi_rating', PSIToText);
-      this.getResults(ENDPOINT_PM25, 'pm25_one_hourly', 'pm25_rating', PM25ToText);
-
-      setInterval(() => {
-        // get the update every hour thereafter
+        // immediately get current values
         this.getResults(ENDPOINT_PSI, 'psi_twenty_four_hourly', 'psi_rating', PSIToText);
         this.getResults(ENDPOINT_PM25, 'pm25_one_hourly', 'pm25_rating', PM25ToText);
-      }, HOUR);
-    }, calcTimeToRefresh());
+
+        setTimeout(() => {
+          // schedule the next API update
+          this.getResults(ENDPOINT_PSI, 'psi_twenty_four_hourly', 'psi_rating', PSIToText);
+          this.getResults(ENDPOINT_PM25, 'pm25_one_hourly', 'pm25_rating', PM25ToText);
+
+          setInterval(() => {
+            // get the update every hour thereafter
+            this.getResults(ENDPOINT_PSI, 'psi_twenty_four_hourly', 'psi_rating', PSIToText);
+            this.getResults(ENDPOINT_PM25, 'pm25_one_hourly', 'pm25_rating', PM25ToText);
+          }, HOUR);
+        }, calcTimeToRefresh());
+      })
+      .catch((e) => {
+        console.error(e);
+      });
   }
 
   getResults(endpoint, srcName, dstName, convert) {
@@ -110,11 +122,14 @@ to query: ${queryStr}`);
         for (const location in apiData) {
           const deviceId = `${manifest.id}-${location}`;
           if (!this.devices[deviceId]) {
-            const device = new PSISGDevice(this, deviceId, {
-              title: `Singapore ${location}`,
-              description: `Singapore atmospheric pollution - ${location}`,
-              '@type': ['MultiLevelSensor'],
-            });
+            const device = new PSISGDevice(
+              this,
+              deviceId, {
+                title: `Singapore ${location}`,
+                description: `Singapore atmospheric pollution - ${location}`,
+                '@type': ['MultiLevelSensor'],
+              },
+              this.hide_sub_index);
             this.handleDeviceAdded(device);
             if (this.saved[deviceId]) {
               this.devices[deviceId].saved = true;

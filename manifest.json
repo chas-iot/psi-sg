@@ -1,5 +1,5 @@
 {
-  "version": "1.2.0",
+  "version": "1.3.0",
   "id": "psi-sg",
   "author": "Chas-IoT",
   "name": "Pollutant Standards Index (PSI) Singapore",
@@ -15,5 +15,18 @@
   },
   "homepage_url": "https://github.com/chas-iot/psi-sg#readme",
   "license": "MPL-2.0",
-  "manifest_version": 1
+  "manifest_version": 1,
+  "options": {
+    "schema": {
+      "type": "object",
+      "description": "Settings",
+      "properties": {
+        "hide_sub_index": {
+          "title": "Hide sub-index properties",
+          "type": "boolean",
+          "description": "Hide the component sub-index properties of the index to reduce clutter."
+        }
+      }
+    }
+  }
 }
