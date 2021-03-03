@@ -42,7 +42,7 @@ function PSIToText(r) {
 
 function PM25ToText(r) {
   /* eslint-disable curly */
-  if (r < 51) return 'Normal';
+  if (r < 56) return 'Normal';
   if (r < 151) return 'Elevated';
   if (r < 251) return 'High';
   /* eslint-enable curly */
