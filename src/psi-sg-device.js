@@ -57,6 +57,12 @@ const PSISG_PROPERTIES = {
     description: 'computed based on 1-hour average Nitrogen Dioxide reading, then normalised to 0-500 range',
     readOnly: true,
   },
+  time_stamp: {
+    title: 'Data timestamp',
+    type: 'string',
+    readOnly: true,
+    description: 'The timestamp is from the upstream data source',
+  },
   pm25_one_hourly: {
     title: `PM25:
 2.5 micron Particulate Matter concentr'n`,
@@ -65,19 +71,13 @@ const PSISG_PROPERTIES = {
     readOnly: true,
     unit: 'µg/m³',
   },
-  time_stamp: {
-    title: 'Data timestamp',
+  pm25_rating: {
+    title: 'PM25 Indicator',
     type: 'string',
     readOnly: true,
-    description: 'The timestamp is from the upstream data source',
   },
   psi_rating: {
     title: 'PSI Air Quality Indicator',
-    type: 'string',
-    readOnly: true,
-  },
-  pm25_rating: {
-    title: 'PM25 Indicator',
     type: 'string',
     readOnly: true,
   },
