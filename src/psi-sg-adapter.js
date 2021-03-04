@@ -88,6 +88,7 @@ class PSISGAdapter extends Adapter {
   getResults(endpoint, srcName, dstName, convert) {
     const dateStr = new Date(Date.now() + SGTIMEZONE).toISOString().substring(0, 19);
     const queryStr = `${endpoint}?date_time=${encodeURIComponent(dateStr)}`;
+    let timestamp = '-';
     fetch(queryStr)
       .then((response) => {
         if (!response.ok) {
@@ -99,6 +100,8 @@ to query: ${queryStr}`);
       .then((json) => {
         const results = {};
         let empty = true;
+        const t = json.items[0].update_timestamp;
+        timestamp = `${t.substring(0, 10)}\n${t.substring(11, 19)}`;
         json.region_metadata.forEach((item) => {
           results[item.name] = {
             name: item.name,
@@ -146,6 +149,8 @@ to query: ${queryStr}`);
                 prop2 && prop2.setCachedValueAndNotify(convert(apiData[location][propName]));
               }
             }
+            const p = device.findProperty('time_stamp');
+            p && p.setCachedValueAndNotify(timestamp);
           }
         }
       })
