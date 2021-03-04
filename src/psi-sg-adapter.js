@@ -63,6 +63,7 @@ class PSISGAdapter extends Adapter {
       })
       .then((config) => {
         this.hide_sub_index = config.hide_sub_index;
+        this.debug_level = config.debug_level || 0;
 
         // immediately get current values
         this.getResults(ENDPOINT_PSI, 'psi_twenty_four_hourly', 'psi_rating', PSIToText);
@@ -98,6 +99,8 @@ to query: ${queryStr}`);
         return response.json();
       })
       .then((json) => {
+        this.debug_level >= 1 && console.debug('received response to', queryStr);
+        this.debug_level >= 2 && console.debug(JSON.stringify(json, null, 2));
         const results = {};
         let empty = true;
         const t = json.items[0].update_timestamp;
