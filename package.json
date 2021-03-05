@@ -6,8 +6,7 @@
   "author": "Chas-IoT",
   "main": "index.js",
   "scripts": {
-    "lint": "eslint .",
-    "prettier": "prettier -u -w src"
+    "lint": "eslint ."
   },
   "keywords": [
     "iot",
