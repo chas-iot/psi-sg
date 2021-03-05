@@ -11,8 +11,9 @@
 const ENDPOINT_PSI = 'https://api.data.gov.sg/v1/environment/psi';
 const ENDPOINT_PM25 = 'https://api.data.gov.sg/v1/environment/pm25';
 const SGTIMEZONE = 8 * 60 * 60 * 1000;  // milliseconds offset from UTC for Singapore
-const HOUR = 60 * 60 * 1000;  // the API updates every hour
-const MINS_OFFSET = 11 * 60 * 1000;  // request at a few mins past each hour
+const HOUR = 60 * 60 * 1000;            // the API updates every hour
+const MINS_OFFSET = 11 * 60 * 1000;     // request at a few mins past each hour
+const HIGH_TIME = '9999-99-99ZZZ';      // a date-time string that exceeds any likely API timestamp
 
 const manifest = require('../manifest.json');
 
@@ -64,17 +65,22 @@ class PSISGAdapter extends Adapter {
       .then((config) => {
         this.hide_sub_index = config.hide_sub_index;
         this.debug_level = config.debug_level || 0;
+        this.timestamp = HIGH_TIME;
 
         // immediately get current values
         this.getResults(ENDPOINT_PSI, 'psi_twenty_four_hourly', 'psi_rating', PSIToText);
         this.getResults(ENDPOINT_PM25, 'pm25_one_hourly', 'pm25_rating', PM25ToText);
 
         setTimeout(() => {
+          this.timestamp = HIGH_TIME;
+
           // schedule the next API update
           this.getResults(ENDPOINT_PSI, 'psi_twenty_four_hourly', 'psi_rating', PSIToText);
           this.getResults(ENDPOINT_PM25, 'pm25_one_hourly', 'pm25_rating', PM25ToText);
 
           setInterval(() => {
+            this.timestamp = HIGH_TIME;
+
             // get the update every hour thereafter
             this.getResults(ENDPOINT_PSI, 'psi_twenty_four_hourly', 'psi_rating', PSIToText);
             this.getResults(ENDPOINT_PM25, 'pm25_one_hourly', 'pm25_rating', PM25ToText);
@@ -89,7 +95,6 @@ class PSISGAdapter extends Adapter {
   getResults(endpoint, srcName, dstName, convert) {
     const dateStr = new Date(Date.now() + SGTIMEZONE).toISOString().substring(0, 19);
     const queryStr = `${endpoint}?date_time=${encodeURIComponent(dateStr)}`;
-    let timestamp = '-';
     fetch(queryStr)
       .then((response) => {
         if (!response.ok) {
@@ -103,8 +108,13 @@ to query: ${queryStr}`);
         this.debug_level >= 2 && console.debug(JSON.stringify(json, null, 2));
         const results = {};
         let empty = true;
-        const t = json.items[0].update_timestamp;
-        timestamp = `${t.substring(0, 10)}\n${t.substring(11, 19)}`;
+        const t1 = json.items[0].update_timestamp;
+        const t2 = `${t1.substring(0, 10)}\n${t1.substring(11, 19)}`;
+        if (t2 < this.timestamp) {
+          // we get 2 different timestamps from the two queries
+          //   show the earlier so more obvious when one of the datasets is stale
+          this.timestamp = t2;
+        }
         json.region_metadata.forEach((item) => {
           results[item.name] = {
             name: item.name,
@@ -153,7 +163,7 @@ to query: ${queryStr}`);
               }
             }
             const p = device.findProperty('time_stamp');
-            p && p.setCachedValueAndNotify(timestamp);
+            this.timestamp !== HIGH_TIME && p && p.setCachedValueAndNotify(this.timestamp);
           }
         }
       })
