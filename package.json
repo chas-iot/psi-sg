@@ -1,5 +1,5 @@
 {
-  "version": "1.4.1",
+  "version": "1.4.2",
   "name": "psi-sg",
   "display_name": "Pollutant Standards Index (PSI) Singapore",
   "description": "Provide the Singapore PSI ( https://en.wikipedia.org/wiki/Pollutant_Standards_Index ) from the https://data.gov.sg API. The data is provided under the terms of https://data.gov.sg/open-data-licence",
@@ -23,6 +23,9 @@
   "bugs": {
     "url": "https://github.com/chas-iot/psi-sg/issues"
   },
+  "dependencies": {
+    "node-fetch": "^2.6.1"
+  },
   "devDependencies": {
     "babel-eslint": "^10.1.0",
     "eslint": "^7.22.0"
@@ -44,8 +47,5 @@
     "type": "adapter",
     "plugin": true,
     "exec": "{nodeLoader} {path}"
-  },
-  "dependencies": {
-    "node-fetch": "^2.6.1"
   }
 }

@@ -13,7 +13,7 @@ const ENDPOINT_PM25 = 'https://api.data.gov.sg/v1/environment/pm25';
 const SGTIMEZONE = 8 * 60 * 60 * 1000;  // milliseconds offset from UTC for Singapore
 const HOUR = 60 * 60 * 1000;            // the API updates every hour
 const MINS_OFFSET = 11 * 60 * 1000;     // request at a few mins past each hour
-const HIGH_TIME = '9999-99-99ZZZ';      // a date-time string that exceeds any likely API timestamp
+const HIGH_TIME = '9999-99-99ZZZ';      // a date-time string exceeding any possible API timestamp
 
 const manifest = require('../manifest.json');
 
@@ -156,14 +156,19 @@ to query: ${queryStr}`);
           if (device) {
             for (const propName in apiData[location]) {
               const prop = device.findProperty(propName);
-              prop && prop.setCachedValueAndNotify(apiData[location][propName]);
+              if (prop) {
+                // directly update and notify properties, as we want to propagate unchanged values
+                // so that the downstream graphing (if any) displays the correct hourly values
+                prop.setCachedValue(apiData[location][propName]);
+                device.notifyPropertyChanged(prop);
+              }
               if (propName === srcName) {
                 const prop2 = device.findProperty(dstName);
                 prop2 && prop2.setCachedValueAndNotify(convert(apiData[location][propName]));
               }
             }
             const p = device.findProperty('time_stamp');
-            this.timestamp !== HIGH_TIME && p && p.setCachedValueAndNotify(this.timestamp);
+            p && p.setCachedValueAndNotify(this.timestamp);
           }
         }
       })
