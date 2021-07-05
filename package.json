@@ -28,7 +28,7 @@
   },
   "devDependencies": {
     "babel-eslint": "^10.1.0",
-    "eslint": "^7.28.0"
+    "eslint": "^7.30.0"
   },
   "files": [
     "LICENSE",
