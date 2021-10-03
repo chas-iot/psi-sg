@@ -98,8 +98,8 @@ class PSISGAdapter extends Adapter {
     fetch(queryStr)
       .then((response) => {
         if (!response.ok) {
-          throw new Error(`api response status: ${response.status} - ${response.statusText}
-to query: ${queryStr}`);
+          throw new Error(`api query ${queryStr}
+        returned status: ${response.status} - ${response.statusText}`);
         }
         return response.json();
       })
@@ -109,11 +109,13 @@ to query: ${queryStr}`);
         const results = {};
         let empty = true;
         const t1 = json.items[0].update_timestamp;
-        const t2 = `${t1.substring(0, 10)}\n${t1.substring(11, 19)}`;
-        if (t2 < this.timestamp) {
-          // we get 2 different timestamps from the two queries
-          //   show the earlier so more obvious when one of the datasets is stale
-          this.timestamp = t2;
+        if (t1) {
+          const t2 = `${t1.substring(0, 10)}\n${t1.substring(11, 19)}`;
+          if (t2 < this.timestamp) {
+            // we get 2 different timestamps from the two queries
+            //   show the earlier so more obvious when one of the datasets is stale
+            this.timestamp = t2;
+          }
         }
         json.region_metadata.forEach((item) => {
           results[item.name] = {
@@ -129,8 +131,9 @@ to query: ${queryStr}`);
           }
         }
         if (empty) {
-          throw new Error(`api returned empty results: ${JSON.stringify(json, null, 2)}
-to query: ${queryStr}`);
+          throw new Error(`api query ${queryStr}
+        returned empty results:
+${JSON.stringify(json, null, 2)}`);
         }
         return results;
       })
