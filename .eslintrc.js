@@ -9,9 +9,10 @@ module.exports = {
     node: true,
   },
   extends: 'eslint:recommended',
-  parser: 'babel-eslint',
+  parser: '@babel/eslint-parser',
   parserOptions: {
     sourceType: 'module',
+    requireConfigFile: false,
   },
   rules: {
     'arrow-parens': [
