@@ -1,5 +1,5 @@
 {
-  "version": "1.4.2",
+  "version": "1.4.3",
   "name": "psi-sg",
   "display_name": "Pollutant Standards Index (PSI) Singapore",
   "description": "Provide the Singapore PSI ( https://en.wikipedia.org/wiki/Pollutant_Standards_Index ) from the https://data.gov.sg API. The data is provided under the terms of https://data.gov.sg/open-data-licence",
