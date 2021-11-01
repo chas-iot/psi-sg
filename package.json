@@ -24,7 +24,7 @@
     "url": "https://github.com/chas-iot/psi-sg/issues"
   },
   "dependencies": {
-    "node-fetch": "^2.6.1"
+    "node-fetch": "^2.6.6"
   },
   "devDependencies": {
     "@babel/core": "^7.15.8",
