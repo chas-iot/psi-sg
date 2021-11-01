@@ -27,7 +27,7 @@
     "node-fetch": "^2.6.6"
   },
   "devDependencies": {
-    "@babel/core": "^7.15.8",
+    "@babel/core": "^7.16.0",
     "@babel/eslint-parser": "^7.15.8",
     "eslint": "^7.32.0"
   },
