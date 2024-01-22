@@ -24,11 +24,11 @@
     "url": "https://github.com/chas-iot/psi-sg/issues"
   },
   "dependencies": {
-    "node-fetch": "^2.6.9"
+    "node-fetch": "^2.6.12"
   },
   "devDependencies": {
-    "@babel/core": "^7.21.5",
     "@babel/eslint-parser": "^7.22.9",
+    "@babel/core": "^7.22.9",
     "eslint": "^7.32.0"
   },
   "files": [
